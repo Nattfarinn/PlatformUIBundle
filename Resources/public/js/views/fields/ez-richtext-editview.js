@@ -446,11 +446,12 @@ YUI.add('ez-richtext-editview', function (Y) {
                                 new ToolbarConfig.ParagraphConfig(),
                                 ToolbarConfig.Image,
                                 ToolbarConfig.Embed,
+                                ToolbarConfig.Table,
                             ],
                             tabIndex: 1
                         },
                         ezadd: {
-                            buttons: ['ezheading', 'ezparagraph', 'ezlist', 'ezimage', 'ezembed'],
+                            buttons: ['ezheading', 'ezparagraph', 'ezlist', 'ezimage', 'ezembed', 'eztable'],
                             tabIndex: 2,
                         },
                     };
