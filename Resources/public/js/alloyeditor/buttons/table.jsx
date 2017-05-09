@@ -37,8 +37,10 @@ YUI.add('ez-alloyeditor-button-table', function (Y) {
                 );
             }
 
+            var css = "ae-button ez-ae-labeled-button";
+
             return (
-                <button className="ae-button ez-ae-labeled-button" onClick={this.props.requestExclusive} tabIndex={this.props.tabIndex}>
+                <button className={css} onClick={this.props.requestExclusive} tabIndex={this.props.tabIndex}>
                     <span className="ez-ae-icon ez-ae-icon-table ae-icon-table"></span>
                     <p className="ez-ae-label">{Y.eZ.trans('table', {}, 'onlineeditor')}</p>
                 </button>

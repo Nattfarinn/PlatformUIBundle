@@ -104,10 +104,10 @@ YUI.add('ez-alloyeditor-button-image', function (Y) {
         },
 
         render: function () {
-            var css = "ae-button ez-ae-labeled-button" + this.getStateClasses();
+            var css = "ae-button ez-ae-labeled-button" + this.getStateClasses(), disabled = !this.state.supportedScope;
 
             return (
-                <button className={css} disabled={!this.state.supportedScope} onClick={this._chooseContent} tabIndex={this.props.tabIndex}>
+                <button className={css} disabled={disabled} onClick={this._chooseContent} tabIndex={this.props.tabIndex}>
                     <span className="ez-ae-icon ez-ae-icon-image ez-font-icon"></span>
                     <p className="ez-ae-label">{Y.eZ.trans('image', {}, 'onlineeditor')}</p>
                 </button>

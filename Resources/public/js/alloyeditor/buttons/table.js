@@ -42,8 +42,10 @@ YUI.add('ez-alloyeditor-button-table', function (Y) {
                 );
             }
 
+            var css = "ae-button ez-ae-labeled-button";
+
             return (
-                React.createElement("button", {className: "ae-button ez-ae-labeled-button", onClick: this.props.requestExclusive, tabIndex: this.props.tabIndex}, 
+                React.createElement("button", {className: css, onClick: this.props.requestExclusive, tabIndex: this.props.tabIndex}, 
                     React.createElement("span", {className: "ez-ae-icon ez-ae-icon-table ae-icon-table"}), 
                     React.createElement("p", {className: "ez-ae-label"}, Y.eZ.trans('table', {}, 'onlineeditor'))
                 )
