@@ -8,14 +8,33 @@ YUI.add('ez-alloyeditor-button-image-tests', function (Y) {
         AlloyEditor = Y.eZ.AlloyEditor,
         ReactDOM = Y.eZ.ReactDOM,
         React = Y.eZ.React,
-        Assert = Y.Assert, Mock = Y.Mock;
+        Assert = Y.Assert, Mock = Y.Mock,
+        setupMockForRender = function () {
+            this.editor = new Mock();
+            this.nativeEditor = new Mock();
+            this.elementPath = new Mock();
 
+            Mock.expect(this.editor, {
+                method: 'get',
+                args: ['nativeEditor'],
+                returns: this.nativeEditor
+            });
+            Mock.expect(this.nativeEditor, {
+                method: 'elementPath',
+                returns: this.elementPath,
+            });
+            Mock.expect(this.elementPath, {
+                method: 'contains',
+                args: ['table', true],
+                returns: null,
+            });
+        };
     renderTest = new Y.Test.Case({
         name: "eZ AlloyEditor image button render test",
 
         setUp: function () {
             this.container = Y.one('.container').getDOMNode();
-            this.editor = {};
+            setupMockForRender.call(this);
         },
 
         tearDown: function () {
@@ -39,79 +58,65 @@ YUI.add('ez-alloyeditor-button-image-tests', function (Y) {
                 "BUTTON", ReactDOM.findDOMNode(button).tagName,
                 "The component should generate a button"
             );
+            Assert.areEqual(
+                false, ReactDOM.findDOMNode(button).disabled,
+                "The button should not be disabled"
+            );
         },
     });
 
     clickTest = new Y.Test.Case({
         name: "eZ AlloyEditor image button click test",
 
-        "async:init": function () {
-            var startTest = this.callback();
-
-            CKEDITOR.plugins.addExternal('lineutils', '../../../lineutils/');
-            CKEDITOR.plugins.addExternal('widget', '../../../widget/');
-            this.container = Y.one('.container');
-            this.editorContainer = Y.one('.editorContainer');
-            this.editor = AlloyEditor.editable(
-                this.editorContainer.getDOMNode(), {
-                    extraPlugins: AlloyEditor.Core.ATTRS.extraPlugins.value + ',ezembed',
-                }
-            );
-            this.editor.get('nativeEditor').on('instanceReady', function () {
-                startTest();
-            });
-        },
-
         setUp: function () {
-            this.listeners = [];
-        },
-
-        destroy: function () {
-            this.editor.destroy();
-            this.editorContainer.setHTML('');
+            this.container = Y.one('.container').getDOMNode();
+            setupMockForRender.call(this);
         },
 
         tearDown: function () {
-            Y.Array.each(this.listeners, function(listener) {
-                listener.removeListener();
-            });
-            ReactDOM.unmountComponentAtNode(this.container.getDOMNode());
+            ReactDOM.unmountComponentAtNode(this.container);
+            delete this.editor;
         },
 
         "Should fire the contentDiscover event": function () {
             var button,
                 contentDiscoverFired = false;
 
-            this.listeners.push(this.editor.get('nativeEditor').on('contentDiscover', function (evt) {
-                contentDiscoverFired = true;
+            Mock.expect(this.nativeEditor, {
+                method: 'fire',
+                args: ['contentDiscover', YUITest.Mock.Value.Object],
+                run: function (name, obj) {
+                    contentDiscoverFired = true;
 
-                Assert.isObject(
-                    evt.data.config,
-                    "The event should provide a config for the UDW"
-                );
-                Assert.isFalse(
-                    evt.data.config.multiple,
-                    "The UDW should be configured with multiple false"
-                );
-                Assert.isFunction(
-                    evt.data.config.contentDiscoveredHandler,
-                    "The UDW should be configured with a contentDiscoveredHandler"
-                );
-                Assert.isTrue(
-                    evt.data.config.loadContent,
-                    "The loadContent flag should be true"
-                );
-                Assert.isFunction(
-                    evt.data.config.isSelectable,
-                    "A isSelectable function should be provided"
-                );
-            }));
+                    Assert.isObject(
+                        obj.config,
+                        "The event should provide a config for the UDW"
+                    );
+                    Assert.isFalse(
+                        obj.config.multiple,
+                        "The UDW should be configured with multiple false"
+                    );
+                    Assert.isFunction(
+                        obj.config.contentDiscoveredHandler,
+                        "The UDW should be configured with a contentDiscoveredHandler"
+                    );
+                    Assert.isTrue(
+                        obj.config.loadContent,
+                        "The loadContent flag should be true"
+                    );
+                    Assert.isFunction(
+                        obj.config.isSelectable,
+                        "A isSelectable function should be provided"
+                    );
+                },
+            });
+
             button = ReactDOM.render(
                 <AlloyEditor.ButtonImage editor={this.editor} />,
-                this.container.getDOMNode()
+                this.container
             );
 
-            this.container.one('button').simulate('click');
+            Y.one('.container').one('button').simulate('click');
 
             Assert.isTrue(
                 contentDiscoverFired,

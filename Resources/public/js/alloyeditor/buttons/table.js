@@ -53,5 +53,5 @@ YUI.add('ez-alloyeditor-button-table', function (Y) {
         },
     });
 
-    AlloyEditor.Buttons[EzButtonTable.key] = AlloyEditor.EzButtonTable = EzButtonTable;
+    AlloyEditor.Buttons[EzButtonTable.key] = AlloyEditor.ButtonTable = EzButtonTable;
 });
